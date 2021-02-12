@@ -2,22 +2,31 @@ User.destroy_all
 Product.destroy_all
 Order.destroy_all
 OrderProduct.destroy_all
+Company.destroy_all
 
+sfw = Company.create(name: "Seafood Wholesalers", address: "6060b Southwest Freeway, Houston, TX 77057")
+f17 = Company.create(name: "Fiesta 17", address: "4200 San Jacinto St, Houston, TX 77004")
+f9 = Company.create(name: "Fiesta 9", address: "10401 Jensen Dr, Houston, TX 77093")
+f47 = Company.create(name: "Fiesta 47", address: "1530 Independence Blvd, Missouri City, TX 77489")
+f8 = Company.create(name: "Fiesta 8", address: "2323 Wirt Rd, Houston, TX 77055")
+f11 = Company.create(name: "Fiesta 11", address: "4711 Airline Dr, Houston, TX 77022")
+f82 = Company.create(name: "Fiesta 82", address: "20331 Farm to Market Rd 529, Katy, TX 77449")
+f66 = Company.create(name: "Fiesta 66", address: "333 Mason Rd, Katy, TX 77450")
 
-david = User.create(first_name: "David", last_name: 'Molina', email: 'david@seafoodwholesalers.com', password_digest: 'password', company: 'SFW', admin:true)
+david = User.create(first_name: "David", last_name: 'Molina', email: 'david@seafoodwholesalers.com', password: 'password', company: sfw, admin:true)
 
-p1 = Product.create(item_number: '005014C', description: '8/12 EZ Peel "Fish Tales"', price: 8.15)
+p1 = Product.create(item_number: '005014C', description: '8/12 EZ Peel "Fish Tales"', price: 8.15, avail_weight: 100)
 p2 = Product.create(item_number: '005038', description: '26/30 EZ Peel FR White', price: 3.98)
 p3 = Product.create(item_number: '002025', description: 'Alligator Meat', price: 7.90)
 p4 = Product.create(item_number: '006514', description: 'Breaded Oysters 30-40ct Regular 7.5lb', price: 3.98)
-p5 = Product.create(item_number: '006185', description: 'Breaded Clam Strips', price: 4.20)
+p5 = Product.create(item_number: '006185', description: 'Breaded Clam Strips', price: 4.20, avail_weight: 400)
 p6 = Product.create(item_number: '006338', description: 'Breaded Shrimp Coconut', price: 5.44)
 p7 = Product.create(item_number: '002117', description: 'Catfish Nuggets', price: 1.85)
-p8 = Product.create(item_number: '002499', description: 'Clams 17/22 Whole', price: 1.29)
+p8 = Product.create(item_number: '002499', description: 'Clams 17/22 Whole', price: 1.29, avail_weight: 50)
 p9 = Product.create(item_number: '002119', description: 'Cod, Fillet, Pacific 8/16 IQF China', price: 3.90)
 p10 = Product.create(item_number: '011266', description: 'Cod Fillet Salad Choice Woodbox', price: 7.90)
 p11 = Product.create(item_number: '002505', description: 'Conch Meat, 100% Clean', price: 10.45)
-p12 = Product.create(item_number: '002309', description: 'Crabmeat Imitation Flakes', price: 1.48)
+p12 = Product.create(item_number: '002309', description: 'Crabmeat Imitation Flakes', price: 1.48, avail_weight: 650)
 p13 = Product.create(item_number: '002525', description: 'Crabs, Blue Claws Cooked', price: 2.69)
 p14 = Product.create(item_number: '002506A', description: 'Crabs, Blue Gumbo, Medium', price: 2.75)
 p15 = Product.create(item_number: '002512E', description: 'Crabs, Blue Gumbo, Large', price: 3.34)
@@ -82,7 +91,10 @@ p73 = Product.create(item_number: '002266', description: 'Tuna, Portions 4oz', p
 p74 = Product.create(item_number: '002495', description: 'Whiting H&G', price: 1.85)
 
 order = Order.create(user_id: david.id)
+order2 = Order.create(user_id: david.id)
 
 orderProduct = OrderProduct.create(product_id: p47.id, order_id: order.id)
+orderProduct2 = OrderProduct.create(product_id: p52.id, order_id: order2.id)
+orderProduct3 = OrderProduct.create(product_id: p3.id, order_id: order2.id)
 
 

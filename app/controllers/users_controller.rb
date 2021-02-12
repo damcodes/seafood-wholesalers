@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :update, :destroy]
+  skip_before_action :authorized, only: [:create, :index]
 
   # GET /users
   def index
@@ -15,10 +16,13 @@ class UsersController < ApplicationController
 
   # POST /users
   def create
-    @user = User.new(user_params)
+    company = Company.find_by(name: user_params[:company])
+    @user = User.new(first_name: user_params[:first_name], last_name: user_params[:last_name], 
+                      email: user_params[:email], password: user_params[:password], company: company)
 
     if @user.save
-      render json: UserSerializer.new(@user).serialize, status: :created, location: @user
+      token = encode_token(user_id: @user.id)
+      render json: { jwt: token }, status: :created, location: @user
     else
       render json: @user.errors, status: :unprocessable_entity
     end
@@ -38,6 +42,10 @@ class UsersController < ApplicationController
     @user.destroy
   end
 
+  def get_current_user 
+    render json: UserSerializer.new(current_user).serialize
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
@@ -46,6 +54,6 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:first_name, :last_name, :email, :company, :password_digest, :admin)
+      params.require(:user).permit(:first_name, :last_name, :email, :company, :password, :admin)
     end
 end

@@ -12,7 +12,7 @@ class UserSerializer
               except: [ :created_at, :updated_at ]
             }
           },
-          except: [ :created_at, :updated_at ]
+          except: [ :updated_at ]
         }
       },
       except: [ :password_digest, :created_at, :updated_at ]

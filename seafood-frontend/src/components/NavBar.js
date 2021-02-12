@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import { input, Menu } from 'semantic-ui-react'
 import { NavLink, withRouter } from 'react-router-dom'
 
-const NavBar = () => {
+const NavBar = ({ user, setUser }) => {
   const [ activeItem, setActiveItem ] = useState(null)
+  const [ loggedIn, setLoggedIn ] = useState(false)
 
   const handleItemClick = (e, { name }) => {
     setActiveItem(name)
@@ -12,6 +13,10 @@ const NavBar = () => {
   const isLoggedIn = () => {
     const authToken = localStorage.getItem('auth_key')
     return authToken === null ? false : true
+  }
+
+  const isEmpty = (obj) => {
+    return Object.keys(obj).length === 0;
   }
   
   return (
@@ -30,21 +35,30 @@ const NavBar = () => {
         onClick={handleItemClick}
       />
 
-      {isLoggedIn ? <Menu.Item 
+      {user && !isEmpty(user) ? <Menu.Item 
           name='profile'
           as={NavLink} to='/profile'
           active={activeItem === 'profile'}
           onClick={handleItemClick}/> : null }
 
-      {isLoggedIn ? <Menu.Item
+      {user && !isEmpty(user) ? <Menu.Item
         name='new order'
-        as={NavLink} to='/newOrder'
+        as={NavLink} to='/new-order'
         active={activeItem === 'new order'}
         onClick={handleItemClick}/> : null }
 
+      { user && !isEmpty(user) && user.admin ?
+        <Menu.Item
+              name={user ? 'inventory' : null}
+              as={NavLink} to={ user ? '/inventory' : '/login' }
+              active={activeItem === 'login'}
+              onClick={handleItemClick}
+            /> : null
+      }
+
       <Menu.Item
-        name={isLoggedIn ? 'logout' : 'login'}
-        as={NavLink} to={ isLoggedIn ? '/logout' : '/login' }
+        name={user && !isEmpty(user) ? 'logout' : 'login'}
+        as={NavLink} to={ user && !isEmpty(user) ? '/logout' : '/login' }
         active={activeItem === 'login'}
         onClick={handleItemClick}
       />

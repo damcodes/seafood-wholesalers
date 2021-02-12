@@ -69,10 +69,8 @@ const LineItem = ({ setTotalCost, item, prevTarget, totalCost, setTargetAndTotal
                       }
                       if (e.target !== prevTarget && isNum(e.target.value)) {
                         setCost(cost + Number(e.target.value))
-                        // console.log(cost)
                         setTargetAndTotalCost(e.target, cost)
                       }
-                      // setTargetAndTotalCost(e.target, cost)
                       return setOrderedWeight(Number(e.target.value))
                     }}
           label={{ basic: true, content: 'lbs' }}

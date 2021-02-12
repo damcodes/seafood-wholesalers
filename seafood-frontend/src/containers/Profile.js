@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { Container, Grid, Segment } from 'semantic-ui-react'
 import OrdersWindow from '../components/OrdersWindow'
 
-function Profile() {
+function Profile({ user }) {
 
   const [ orders, setOrders ] = useState([])
 

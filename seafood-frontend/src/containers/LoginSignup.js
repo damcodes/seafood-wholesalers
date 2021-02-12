@@ -4,7 +4,7 @@ import Login from '../components/Login'
 import Signup from '../components/Signup'
 import { Redirect } from 'react-router-dom'
 
-function LoginSignup() {
+function LoginSignup({ setUser, logIn }) {
 
   const [loginState, setLoginState] = useState(true)
   const [loggedIn, setLoggedIn] = useState(false)
@@ -19,7 +19,7 @@ function LoginSignup() {
       alert('Email and Password required')
       return
     }
-    
+
     fetch('http://localhost:3001/login', {
       method: "POST",
       headers: { "Content-type":"application/json" },
@@ -32,8 +32,11 @@ function LoginSignup() {
     })
     .then( res => res.json() )
     .then( data => {
+      const newUser = JSON.parse(data.user)
       localStorage.setItem('auth_key', data['jwt'])
+      logIn(loggedIn)
       setLoggedIn(true)
+      setUser(newUser)
     })
   }
   
@@ -60,7 +63,9 @@ function LoginSignup() {
     .then( res => res.json() )
     .then( data => {
       localStorage.setItem('auth_key', data['jwt'])
+      logIn(loggedIn)
       setLoggedIn(true)
+      setUser(JSON.parse(data.user))
     }) 
   }
 

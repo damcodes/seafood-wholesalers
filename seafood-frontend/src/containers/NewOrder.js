@@ -72,7 +72,7 @@ const NewOrder = () => {
         </Table.Header>
 
         <Table.Body>
-          { items.filter(item => item.avail_weight > 0).map(item => {
+          { items.filter(item => item.avail_weight > 0 && item.active).map(item => {
               return(
                 <LineItem key={item.id} setTotalCost={setTotalCost//cost => {
                             // if (cost === 0) {
@@ -81,6 +81,7 @@ const NewOrder = () => {
                             // if (target && isNum(target))
                             //   return setTotalCost(totalCost + cost)
                               }
+                          id={item.item_number}
                           item={item} 
                           prevTarget={target}
                           totalCost={totalCost}
@@ -99,6 +100,7 @@ const NewOrder = () => {
                             }
                             if (isNum(newTarget.value)) {
                               setTotalCost(totalCost + cost)
+                              // setCart(newTarget.value)
                               // debugger
                             }
                             return setTarget(newTarget)

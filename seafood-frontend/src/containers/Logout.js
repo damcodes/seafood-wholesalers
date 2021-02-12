@@ -1,10 +1,11 @@
 import { Segment, Menu, Button } from 'semantic-ui-react'
 import { Link, Redirect } from 'react-router-dom'
 
-const Logout = () => {
+const Logout = ({ setUser }) => {
 
   const logout = () => {
     localStorage.removeItem('auth_key')
+    setUser({})
   }
 
   return(

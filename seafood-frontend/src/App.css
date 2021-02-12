@@ -83,3 +83,15 @@
   text-align: right;
   font-style: bold;
 }
+
+#changed-weight-header, #changed-weight {
+  text-align: center;
+}
+
+#inventory-price, #inventory-price-header {
+  text-align: right;
+}
+
+#delete-product-btn {
+  background-color: rgb(246, 244, 244);
+}

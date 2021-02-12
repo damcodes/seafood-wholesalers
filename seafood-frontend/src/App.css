@@ -36,3 +36,50 @@
     transform: rotate(360deg);
   }
 }
+
+#orders-window {
+  text-align: left;
+  padding: 5px;
+  border-radius: 10px;
+  /* display: inline-block; */
+  width: auto;
+  float: left;
+}
+
+#logging-out-message {
+  font-size: 25px;
+}
+
+#logout-choice {
+  text-align: center;
+}
+
+/* #new-order {
+  border: 2px solid black;
+} */
+
+.logout-options {
+  color: white;
+}
+
+#new-order-price, #new-order-weight, #weight-ordered {
+  text-align: right;
+}
+
+#new-order-price-header, #new-order-weight-header, #weight-ordered-header {
+  text-align: right;
+}
+
+#submit-order-footer {
+  text-align: center;
+}
+
+.line-item-total {
+  background-color:#F5F5F5;
+}
+
+#total-price-footer {
+  background-color: #F5F5F5;
+  text-align: right;
+  font-style: bold;
+}

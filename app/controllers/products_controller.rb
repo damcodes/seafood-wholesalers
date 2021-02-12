@@ -37,6 +37,7 @@ class ProductsController < ApplicationController
   # DELETE /products/1
   def destroy
     @product.destroy
+    render json: ProductSerializer.new(@product).serialize
   end
 
   private
@@ -47,6 +48,6 @@ class ProductsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def product_params
-      params.require(:product).permit(:description, :price, :item_number)
+      params.require(:product).permit(:description, :price, :item_number, :avail_weight, :active, :id)
     end
 end

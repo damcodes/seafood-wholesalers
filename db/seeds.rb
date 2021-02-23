@@ -97,4 +97,3 @@ orderProduct = OrderProduct.create(product_id: p47.id, order_id: order.id)
 orderProduct2 = OrderProduct.create(product_id: p52.id, order_id: order2.id)
 orderProduct3 = OrderProduct.create(product_id: p3.id, order_id: order2.id)
 
-

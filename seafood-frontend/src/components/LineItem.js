@@ -1,12 +1,13 @@
-import { Table, Input, Checkbox } from 'semantic-ui-react'
+import { Table, Input, Checkbox, Button, Icon } from 'semantic-ui-react'
 import { useState, useEffect } from 'react'
 
-const LineItem = ({ setTotalCost, item, prevTarget, totalCost, setTargetAndTotalCost }) => {
+const LineItem = ({ item, prevTarget, setTargetAndTotalCost, setCart, cart, setTotalCost }) => {
 
   const [ availWeight, setAvailWeight ] = useState(item.avail_weight)
   const [ orderedWeight, setOrderedWeight ] = useState(0)
   const [ cost, setCost ] = useState(0)
   const [ checked, setCheck ] = useState(false)
+  const [ lineOrder, setLineOrder ] = useState({})
 
 
   const countDecimals = (val) => {
@@ -25,61 +26,59 @@ const LineItem = ({ setTotalCost, item, prevTarget, totalCost, setTargetAndTotal
   useEffect(() => {
     setAvailWeight(item.avail_weight - orderedWeight)
     setCost(orderedWeight * item.price)
-  }, [ item.price, orderedWeight ])
+  }, [ item.price, orderedWeight, item.avail_weight ])
 
   useEffect(() => {
-    // debugger
-    setTargetAndTotalCost(document.getElementById(`${item.id}-weight`), cost)
-  }, [cost])
+    checked ? setCart([...cart, lineOrder]) : setCart(() => cart.filter( current => current.description !== lineOrder.description))
+  }, [ checked, lineOrder ])
   
   const isNum = (str) => {
     return /^\d+$/.test(str)
   }
 
   return(
-    <Table.Row onChange={() => console.log('hi')} >
+    <Table.Row >
       <Table.Cell collapsing>
-        <Checkbox 
-          toggle={true}
-          checked={checked} 
-          onClick={() => {
-            if (!checked) {
-              setCost(0)
-            }
-            return setCheck(!checked)
-          }} 
-        />
+        
       </Table.Cell>
       <Table.Cell>{item.description}</Table.Cell>
       <Table.Cell id='new-order-price'>{pricifyAndStringify(item.price)}</Table.Cell>
       <Table.Cell id='new-order-weight'>{availWeight}</Table.Cell>
       <Table.Cell id='weight-ordered'>
         <Input
-          positive
-          disabled={checked ? false : true}
           onChange={ e => {
-                      // const newWeight = isNum(e.target.value) ? Number(e.target.value) : null
-                      // debugger
-                      // console.log(cost)
-                      if (e.key === "Backspace" && e.target.value === '') {
+                      if (e.target.value === '') {
                         setOrderedWeight(0)
                       } 
-                      if (e.target.value.length > 1) {
+                      if (e.target.value.length > 1 && e.target === prevTarget) {
                         setTargetAndTotalCost(e.target, 0)
                       }
-                      if (e.target !== prevTarget && isNum(e.target.value)) {
-                        setCost(cost + Number(e.target.value))
-                        setTargetAndTotalCost(e.target, cost)
+                      if (prevTarget && (e.target.value !== prevTarget.value) && isNum(e.target.value)) {
+                        setCost(cost + (Number(e.target.value) * item.price))
                       }
                       return setOrderedWeight(Number(e.target.value))
                     }}
           label={{ basic: true, content: 'lbs' }}
           labelPosition='right'
+          disabled={checked}
           id={`${item.id}-weight`}
         />
       </Table.Cell>
       <Table.Cell className='line-item-total'>
         { pricifyAndStringify(cost) }
+      </Table.Cell>
+      <Table.Cell collapsing>
+        <Button 
+          toggle={true}
+          positive={checked ? false: true}
+          // checked={checked} 
+          onClick={() => {
+            setLineOrder({...item, orderWeight: orderedWeight, cost: cost})
+            return setCheck(!checked)
+          }} 
+        >
+          {checked ? <Icon name='pencil alternate' /> : <Icon name='check'/>}
+        </Button>
       </Table.Cell>
     </Table.Row>
   )

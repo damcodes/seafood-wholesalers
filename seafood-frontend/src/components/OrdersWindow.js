@@ -3,10 +3,10 @@ import { Redirect } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Header, Container, Segment, Icon, List } from 'semantic-ui-react'
 
-const OrdersWindow = ({ orders }) => {
+const OrdersWindow = ({ orders, currentUser }) => {
   return( 
     <Container id='orders-window'>
-      <Header as='h2' >Your Orders</Header>
+      <Header textAlign='center' as='h2' >Your Orders</Header>
       <List selection verticalAlign="middle">
         { orders.map(order => {
             return(

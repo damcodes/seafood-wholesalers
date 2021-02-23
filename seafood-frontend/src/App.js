@@ -27,7 +27,7 @@ function App() {
       .then( res => res.json() )
       .then( currentUser => setUser(currentUser) )
     }
-  }, [])
+  }, [loggedIn])
 
   return (
     <div className="App">
@@ -36,14 +36,15 @@ function App() {
         <NavBar user={user} logIn={setLoggedIn} />
         <Switch>
           <Route exact path='/inventory' component={user ? Inventory : null} />
-          <Route exact path='/login' component={() => <LoginSignup setUser={user => setUser(user)} logIn={bool => setLoggedIn(bool)}/>} />
+          <Route exact path='/login' component={() => <LoginSignup isloggedIn={loggedIn} setUser={user => setUser(user)} logIn={bool => setLoggedIn(bool)}/>} />
           <Route exact path='/logout' component={() => <Logout setUser={user => setUser(user)} />} />
           <Route exact path='/home' component={Home} />
           <Route exact path='/about' component={About} />
-          <Route exact path='/profile' component={() => <Profile user={user} />} />
+          <Route exact path='/profile' component={() => <Profile currentUser={user} />} />
           <Route exact path='/orders' component={Orders} />
           <Route exact path='/new-order' component={NewOrder} />
         </Switch>
+        { loggedIn ? <Redirect to='/profile' /> : <Redirect to='/login' /> }
       </Router>
     </div>
   );

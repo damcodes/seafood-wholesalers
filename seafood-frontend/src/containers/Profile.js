@@ -1,9 +1,10 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import { Container, Grid, Segment } from 'semantic-ui-react'
+import { Container, Grid, Segment, Card, Feed } from 'semantic-ui-react'
 import OrdersWindow from '../components/OrdersWindow'
+import DailyOrders from '../components/DailyOrders'
 
-function Profile({ user }) {
+function Profile({ currentUser }) {
 
   const [ orders, setOrders ] = useState([])
 
@@ -22,6 +23,19 @@ function Profile({ user }) {
     })
   }, [])
 
+  const ifAdmin = () => {
+    if (currentUser && currentUser.admin ) {
+      return(
+        // <Grid.Row id='current-orders-row'>
+        // <Grid.Column >
+              <DailyOrders currentUser={currentUser}/>
+        // </Grid.Column>
+        // {/* </Grid.Row> */}
+      ) 
+    }
+  }
+
+
   return(
     <Container>
       <Grid centered={true}>
@@ -39,11 +53,10 @@ function Profile({ user }) {
           </Grid.Column>
         </Grid.Row>
 
-        <Grid.Row id='orders-row'>
-          <Segment>
-            <OrdersWindow orders={orders} />
-          </Segment>
-        </Grid.Row>
+        <OrdersWindow orders={orders} currentUser={currentUser}/>
+
+        {ifAdmin()}
+        
       </Grid>
     </Container>
   )

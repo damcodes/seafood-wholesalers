@@ -15,7 +15,7 @@ class ProductSerializer
           except: [ :created_at, :updated_at ]
         }
       },
-      except: [ :created_at, :updated_at ]
+      except: [ :updated_at ]
     }
     @product.to_json(options)
   end

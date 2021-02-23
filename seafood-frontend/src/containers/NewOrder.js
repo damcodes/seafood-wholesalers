@@ -5,10 +5,9 @@ import LineItem from '../components/LineItem'
 const NewOrder = () => {
 
   const [ items, setItems ] = useState([])
-  // const [ itemCosts, setItemCosts ] = useState([])
   const [ target, setTarget ] = useState(null)
-  const [ totalCost, setTotalCost ] = useState(0)
   const [ cart, setCart ] = useState([])
+  const [ totalCost, setTotalCost ] = useState(0)
 
   useEffect(() => {
     fetch('http://localhost:3001/products', {
@@ -21,6 +20,15 @@ const NewOrder = () => {
     .then( res => res.json() )
     .then( products => setItems(products) )
   }, [])
+
+  useEffect(() => {
+    if (cart.length > 0) { 
+      const total = cart.map( line => line.cost).reduce( (num1, num2) => num1 + num2)
+      setTotalCost(total)
+    } else {
+      setTotalCost(0)
+    }
+  }, [cart])
 
   const countDecimals = (val) => {
     if( Math.floor(val) === val ) return 0
@@ -44,19 +52,6 @@ const NewOrder = () => {
     console.log(e.target)
   }
 
-  const itemCosts = document.querySelectorAll(".line-item-total")
-  let itemTotals = []
-  let total
-
-  if (itemCosts.lengh > 0) {
-    itemCosts.forEach( item => {
-      itemTotals.push(Number(item.textContent.slice(1)))
-    })
-    total = itemTotals.reduce( (num, current) => {return num + current}) 
-    // setTotalCost(total)
-  }
-  // debugger
-
   return( 
     <Container>
       <Table compact celled definition>
@@ -68,45 +63,38 @@ const NewOrder = () => {
             <Table.HeaderCell id='new-order-weight-header'>Available Weight</Table.HeaderCell>
             <Table.HeaderCell id='weight-ordered-header'>Order Weight</Table.HeaderCell>
             <Table.HeaderCell id='line-total-header'>Cost</Table.HeaderCell>
+            <Table.HeaderCell />
           </Table.Row>
         </Table.Header>
 
         <Table.Body>
           { items.filter(item => item.avail_weight > 0 && item.active).map(item => {
               return(
-                <LineItem key={item.id} setTotalCost={setTotalCost//cost => {
-                            // if (cost === 0) {
-                            //   return setTotalCost(0)
-                            // }
-                            // if (target && isNum(target))
-                            //   return setTotalCost(totalCost + cost)
-                              }
-                          id={item.item_number}
-                          item={item} 
-                          prevTarget={target}
-                          totalCost={totalCost}
-                          setTargetAndTotalCost={(newTarget, cost) => {
-                            // console.log(cost)
-                            // console.log(totalCost)
-                            // debugger
-                            // console.log(newTarget)
-                            if (newTarget.value.length > 1) {
-                              setTotalCost(0)
-                              // debugger
-                            }
-                            if (cost === 0) {
-                              setTotalCost(0)
-                              // debugger
-                            }
-                            if (isNum(newTarget.value)) {
-                              setTotalCost(totalCost + cost)
-                              // setCart(newTarget.value)
-                              // debugger
-                            }
-                            return setTarget(newTarget)
-                          }
-                        }
-                      />
+                <LineItem 
+                  key={item.id} 
+                  id={item.item_number}
+                  item={item} 
+                  prevTarget={target}
+                  totalCost={totalCost}
+                  setTotalCost={setTotalCost}
+                  setCart={setCart}
+                  cart={cart}
+                  setTargetAndTotalCost={(newTarget, cost) => {
+                    if (newTarget.value.length > 1) {
+                      setTotalCost(0)
+                    }
+                    if (cost === 0) {
+                      setTotalCost(0)
+                    }
+                    if (isNum(newTarget.value)) {
+                      setTotalCost(cost)
+                    }
+                    if (newTarget !== target && isNum(newTarget.value)) {
+                      setTotalCost(totalCost + cost) 
+                    }
+                    return setTarget(newTarget)
+                  }}
+                />
               )
             }
           )}
@@ -115,18 +103,18 @@ const NewOrder = () => {
         <Table.Footer fullWidth>
           <Table.Row >
             <Table.HeaderCell 
-              colSpan='6'
+              colSpan='7'
               id='total-price-footer'
             >
               <Label as='a' tag>
-                {`Order Total: ${totalCost ? pricifyAndStringify(totalCost) : '$0.00'}`}
+                {`Order Total: ${pricifyAndStringify(totalCost)}`}
               </Label>
             </Table.HeaderCell>
           </Table.Row>
 
           <Table.Row>
             <Table.HeaderCell 
-              colSpan='6'
+              colSpan='7'
               id='submit-order-footer'
             >
               <Button 

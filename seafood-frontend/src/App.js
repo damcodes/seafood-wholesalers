@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch, Redirect, useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import LoginSignup from './containers/LoginSignup'
 import Home from './containers/Home'
@@ -10,6 +10,9 @@ import NavBar from './components/NavBar'
 import Logout from './containers/Logout'
 import NewOrder from './containers/NewOrder'
 import Inventory from './containers/Inventory'
+import Order from './components/Order'
+import OrderById from './containers/OrderById'
+import Routes from './containers/Routes'
 
 function App() {
 
@@ -29,6 +32,12 @@ function App() {
     }
   }, [loggedIn])
 
+  useEffect(() => {
+    if (user && window.location.pathname === '/login') {
+      window.location.replace('/profile')
+    }
+  }, [ user ])
+
   return (
     <div className="App">
       <img src="https://www.seafoodwholesalers.com/image/131551250.png" alt="seafood logo" />
@@ -42,9 +51,11 @@ function App() {
           <Route exact path='/about' component={About} />
           <Route exact path='/profile' component={() => <Profile currentUser={user} />} />
           <Route exact path='/orders' component={Orders} />
-          <Route exact path='/new-order' component={NewOrder} />
+          <Route exact path='/new-order' component={() => <NewOrder user={user} />} />
+          <Route exact path='/orders/:id' component={() => <OrderById />} />
+          <Route exact path='/routes' component={Routes} />
         </Switch>
-        { loggedIn ? <Redirect to='/profile' /> : <Redirect to='/login' /> }
+        {/* { loggedIn ? <Redirect to='/profile' /> : <Redirect to='/login' /> } */}
       </Router>
     </div>
   );

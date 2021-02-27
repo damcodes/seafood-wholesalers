@@ -5,7 +5,7 @@ const Logout = ({ setUser }) => {
 
   const logout = () => {
     localStorage.removeItem('auth_key')
-    setUser({})
+    setUser(null)
   }
 
   return(

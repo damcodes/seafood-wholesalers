@@ -1,13 +1,32 @@
 import { useState, useEffect } from 'react' 
+import { Redirect, useHistory } from 'react-router-dom'
 import { Button, Checkbox, Icon, Table, Container, Input, Tab, Label } from 'semantic-ui-react'
 import LineItem from '../components/LineItem'
+import Order from '../components/Order'
 
 const NewOrder = () => {
+  
+  let history = useHistory()
 
+  const [ user, setUser ] = useState({})
   const [ items, setItems ] = useState([])
   const [ target, setTarget ] = useState(null)
   const [ cart, setCart ] = useState([])
   const [ totalCost, setTotalCost ] = useState(0)
+  const [ confirming, setConfirming ] = useState(false)
+  const [ currentOrder, setCurrentOrder ] = useState(null)
+
+  useEffect(() => {
+    fetch('http://localhost:3001/current-user', {
+      method: "GET",
+      headers: {
+        "Content-type":"application/json",
+        "Authorization": localStorage.getItem("auth_key")
+      }
+    })
+    .then( res => res.json() )
+    .then( user => setUser(user) )
+  }, [])
 
   useEffect(() => {
     fetch('http://localhost:3001/products', {
@@ -47,14 +66,91 @@ const NewOrder = () => {
     return /^\d+$/.test(str)
   }
 
-  const submitOrder = e => {
-    console.log('submitting')
-    console.log(e.target)
+  const newOrder = () => {
+    fetch('http://localhost:3001/orders', {
+      method: "POST",
+      headers: {
+        "Content-type":"application/json",
+        "Authorization":localStorage.getItem("auth_key")
+      }, 
+      body: JSON.stringify({
+        order: {
+          user_id: user.id,
+          order_total: totalCost,
+          order_status: 'pending'
+        }
+      })
+    })
+    .then( res => res.json() )
+    .then( newOrder => {
+      setCurrentOrder(newOrder)
+      cart.map( lineItem => newOrderProduct(lineItem, newOrder))
+    })
+  }
+
+  const newOrderProduct = (item, order) => {
+    fetch('http://localhost:3001/order_products', {
+      method: "POST",
+      headers: {
+        "Content-type":"application/json",
+        "Authorization":localStorage.getItem("auth_key")
+      }, 
+      body: JSON.stringify({
+        order_product: {
+          order_id: order.id, 
+          product_id: item.id,
+          weight: item.orderWeight
+        }
+      })
+    })
+    .then( res => res.json() )
+    .then( data => {
+      updateProduct(item)
+      history.push(`/orders/${order.id}`)
+    })
+  }
+
+  const updateProduct = (item) => {
+    fetch(`http://localhost:3001/products/${item.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-type":"application/json",
+        "Authorization":localStorage.getItem("auth_key")
+      }, 
+      body: JSON.stringify({
+        product: {
+          avail_weight: item.avail_weight - item.orderWeight
+        }
+      })
+    })
+  }
+
+  const submitOrder = () => {
+    // setConfirming(!confirming)
+    newOrder()
   }
 
   return( 
+    confirming ? 
+
+    <div>
+      <Order cart={cart} />
+      <br/>
+      <Button positive onClick={submitOrder}>Confirm and Submit</Button>
+      <Button onClick={() => {
+                if (confirming) {
+                  window.location.replace('/new-order')
+                }
+                setConfirming(!confirming)
+                }
+              }
+      >Back</Button>
+    </div>
+
+    :
+
     <Container>
-      <Table compact celled definition>
+      <Table striped compact celled definition>
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell />
@@ -121,7 +217,7 @@ const NewOrder = () => {
                 id='submit-order-btn'
                 size='small'
                 positive={true}
-                onClick={submitOrder}
+                onClick={() => setConfirming(!confirming)}
               >
                 <Icon name='paper plane' />Submit
               </Button>
@@ -130,7 +226,7 @@ const NewOrder = () => {
         </Table.Footer>
       </Table>
       
-    </Container>
+    </Container> 
   )
 }
 

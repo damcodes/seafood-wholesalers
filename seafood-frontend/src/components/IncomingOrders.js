@@ -3,15 +3,26 @@ import { Redirect, Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Header, Container, Segment, Icon, List } from 'semantic-ui-react'
 
-const OrdersWindow = ({ orders, currentUser }) => {
+const IncomingOrders = () => {
 
-  // const [ userOrders, setUserOrders ] = useState(currentUser ? currentUser.orders : {})
+  const [ orders, setOrders ] = useState([])
+
+  useEffect(() => {
+    fetch(`http://localhost:3001/orders`, {
+      method: "GET",
+      headers: {
+        "Content-type":"application/json",
+        "Authorization":localStorage.getItem("auth_key")
+      }
+    })
+    .then( res => res.json() )
+    .then( orders => setOrders(orders) )
+  }, [])
 
   return( 
     // <Container textAlign='center' id='orders-window'>
-      // <Header textAlign='center' as='h2' >Your Orders</Header>
       <List textAlign='center' selection verticalAlign="middle">
-        { orders.filter( order => order.order_status !== 'completed').map(order => {
+        { orders.filter( order => order.order_status === 'pending').map(order => {
             return(
               <List.Item key={order.id} as='a'>
                 <Link to={`/orders/${order.id}`}>
@@ -29,4 +40,4 @@ const OrdersWindow = ({ orders, currentUser }) => {
   )
 }
 
-export default OrdersWindow
+export default IncomingOrders

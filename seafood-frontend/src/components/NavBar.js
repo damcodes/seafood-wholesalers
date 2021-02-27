@@ -56,6 +56,15 @@ const NavBar = ({ user, setUser }) => {
             /> : null
       }
 
+      { user && !isEmpty(user) && (user.role === 'transportation' || user.admin) ? 
+        <Menu.Item
+          name={user ? 'routes' : null }
+          as={NavLink} to='/routes'
+          active={activeItem === 'routes'}
+          onClick={handleItemClick} 
+          /> : null 
+      }
+
       <Menu.Item
         name={user && !isEmpty(user) ? 'logout' : 'login'}
         as={NavLink} to={ user && !isEmpty(user) ? '/logout' : '/login' }

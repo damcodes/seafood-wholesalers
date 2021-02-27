@@ -70,8 +70,7 @@ const LineItem = ({ item, prevTarget, setTargetAndTotalCost, setCart, cart, setT
       <Table.Cell collapsing>
         <Button 
           toggle={true}
-          positive={checked ? false: true}
-          // checked={checked} 
+          positive={checked ? false : true}
           onClick={() => {
             setLineOrder({...item, orderWeight: orderedWeight, cost: cost})
             return setCheck(!checked)

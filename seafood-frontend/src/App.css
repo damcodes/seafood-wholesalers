@@ -95,3 +95,16 @@
 #delete-product-btn {
   background-color: rgb(246, 244, 244);
 }
+
+#order-conf-total-price {
+  font-weight: bolder;
+  font-size: 25px;
+}
+
+.order-info {
+  font-family: 'Papyrus', 'Copperplate', fantasy;
+}
+
+.route-headers {
+  text-decoration: underline;
+}

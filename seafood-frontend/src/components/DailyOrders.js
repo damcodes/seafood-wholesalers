@@ -46,21 +46,18 @@ const DailyOrders = ({ currentUser }) => {
     )
   }
 
-  return( 
-    <Container id='orders-window' textAlign='center'>
-      <Header textAlign='center' as='h2' >Orders By Date</Header>
+  return(
+    <div>
       <Input type="date" onChange={e => {
           console.log(e.target.value)
           // console.log(Date(e.target.value).getDay())
             setDate(e.target.value.slice(0,10))
       }}/>
-      {/* <br/> */}
-      <Button  floated='right' onClick={() => setFiltered(!filtered)} circular='true' >
+      <Button floated='right' onClick={() => setFiltered(!filtered)} circular='true' >
         <Icon name='search' onClick={() => setFiltered(!filtered)}/>
       </Button>
-      <br/>
       {  filtered ? filteredOrders(allOrders) : null }
-    </Container>
+    </div>
   )
 }
 

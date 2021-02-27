@@ -65,7 +65,7 @@ const Inventory = () => {
 
   return( 
     <Container>
-      <Table celled definition>
+      <Table striped celled definition>
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>Active?</Table.HeaderCell>
@@ -78,7 +78,7 @@ const Inventory = () => {
         </Table.Header>
 
         <Table.Body>
-          { items.map(item => {
+          { items.sort( (a, b) => b.avail_weight - a.avail_weight ).map(item => {
               return(
                 <InventoryLineItem 
                   key={item.id} 

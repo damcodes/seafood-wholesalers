@@ -1,13 +1,13 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import { Container, Grid, Segment, Card, Feed, Header, Tab } from 'semantic-ui-react'
+import { Container, Grid, Segment, Header } from 'semantic-ui-react'
 import OrdersWindow from '../components/OrdersWindow'
 import DailyOrders from '../components/DailyOrders'
 import IncomingOrders from '../components/IncomingOrders'
-import Order from '../components/Order'
 import ProcessingOrders from '../components/ProcessingOrders'
 import PendingOrders from '../components/PendingOrders'
 import CompletedOrders from '../components/CompletedOrders'
+import UserInfo from '../components/UserInfo'
 
 function Profile() {
 
@@ -46,7 +46,8 @@ function Profile() {
 
   return(
     <Container>
-
+      <UserInfo />
+      <br/>
       { currentUser.admin ?
       <Grid centered={true}>
         <Grid.Row id='new-order' columns={2}>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react' 
 import { Redirect, useHistory } from 'react-router-dom'
-import { Button, Checkbox, Icon, Table, Container, Input, Tab, Label } from 'semantic-ui-react'
+import { Button, Checkbox, Icon, Table, Container, Input, Tab, Label, Segment, Grid } from 'semantic-ui-react'
 import LineItem from '../components/LineItem'
 import Order from '../components/Order'
 
@@ -15,6 +15,8 @@ const NewOrder = () => {
   const [ totalCost, setTotalCost ] = useState(0)
   const [ confirming, setConfirming ] = useState(false)
   const [ currentOrder, setCurrentOrder ] = useState(null)
+  const [ sort, setSort ] = useState(null)
+  const [ searched, setSearched ] = useState(null)
 
   useEffect(() => {
     fetch('http://localhost:3001/current-user', {
@@ -150,6 +152,28 @@ const NewOrder = () => {
     :
 
     <Container>
+      <Grid>
+        <Grid.Row columns={2}>
+          <Grid.Column textAlign='left'>
+            {/* <Segment > */}
+              <Label>
+                Sort By: 
+              </Label>
+              <select onChange={(e) => setSort(e.target.value)}>
+                <option></option>
+                <option>Price</option>
+                <option>Name</option>
+              </select>
+            {/* </Segment> */}
+          </Grid.Column>
+
+          <Grid.Column textAlign='right'>
+            {/* <Segment> */}
+              <Input icon='search' placeholder='Search...' onChange={e => setSearched(e.target.value)}/>
+            {/* </Segment> */}
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
       <Table striped compact celled definition>
         <Table.Header>
           <Table.Row>
@@ -164,7 +188,18 @@ const NewOrder = () => {
         </Table.Header>
 
         <Table.Body>
-          { items.filter(item => item.avail_weight > 0 && item.active).map(item => {
+          { (sort && sort !== '') || (searched && searched !== '') ?
+            items.filter(item => item.active && item.avail_weight > 0 && (item.description.toUpperCase().includes(searched) || item.description.toLowerCase().includes(searched)))
+                 .sort( (a,b) => {
+                              let op
+                              if (sort === "Price") {
+                                op = b.price - a.price
+                              } else if (sort === "Name") {
+                                op = a.description.localeCompare(b.description)
+                              }
+                              return op
+                            })
+                 .map(item => {
               return(
                 <LineItem 
                   key={item.id} 
@@ -191,9 +226,38 @@ const NewOrder = () => {
                     return setTarget(newTarget)
                   }}
                 />
-              )
-            }
-          )}
+            )})
+            : 
+            items.filter(item => item.avail_weight > 0 && item.active)
+                 .map(item => {
+              return(
+                <LineItem 
+                  key={item.id} 
+                  id={item.item_number}
+                  item={item} 
+                  prevTarget={target}
+                  totalCost={totalCost}
+                  setTotalCost={setTotalCost}
+                  setCart={setCart}
+                  cart={cart}
+                  setTargetAndTotalCost={(newTarget, cost) => {
+                    if (newTarget.value.length > 1) {
+                      setTotalCost(0)
+                    }
+                    if (cost === 0) {
+                      setTotalCost(0)
+                    }
+                    if (isNum(newTarget.value)) {
+                      setTotalCost(cost)
+                    }
+                    if (newTarget !== target && isNum(newTarget.value)) {
+                      setTotalCost(totalCost + cost) 
+                    }
+                    return setTarget(newTarget)
+                  }}
+                />
+            )})            
+          }
         </Table.Body>
 
         <Table.Footer fullWidth>

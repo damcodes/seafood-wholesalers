@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react' 
-import { Button, Checkbox, Icon, Table, Container, Input, Tab, Label } from 'semantic-ui-react'
+import { Button, Checkbox, Icon, Table, Container, Input, Tab, Label, Grid } from 'semantic-ui-react'
 import InventoryLineItem from '../components/InventoryLineItem'
 
 const Inventory = () => {
 
   const [ items, setItems ] = useState([])
+  const [ sort, setSort ] = useState('')
+  const [ searched, setSearched ] = useState('')
+  const [ processedItems, setProcessed ] = useState([])
 
   useEffect(() => {
     fetch('http://localhost:3001/products', {
@@ -18,14 +21,39 @@ const Inventory = () => {
     .then( products => setItems(products) )
   }, [])
 
-  const isNum = (str) => {
-    return /^\d+$/.test(str)
-  }
-
-  const submitOrder = e => {
-    console.log('submitting')
-    console.log(e.target)
-  }
+  useEffect(() => {
+    if (sort !== '' && searched !== '') {
+      items.filter( item => item.description.includes(searched) )
+      .sort( (a, b) => {
+        let op 
+        if (sort === 'Weight') {
+          op = b.avail_weight - a.avail_weight
+        } else if (sort === 'Price') {
+          op = b.price - a.price
+        } else if (sort === 'Name') {
+          op = a.description.localeCompare(b.description)
+        }
+        return op 
+      })
+    } else if (sort === '' && searched !== '') {
+      items.filter( item => item.description.includes(searched) )
+    } else if (sort !== '' && searched === '') {
+      items.sort( (a, b) => {
+        let op 
+        if (sort === 'Weight') {
+          op = b.avail_weight - a.avail_weight
+        } else if (sort === 'Price') {
+          op = b.price - a.price
+        } else if (sort === 'Name') {
+          op = a.description.localeCompare(b.description)
+        }
+        return op 
+      })
+    } else {
+      items.sort( (a,b) => b.active - a.active)
+    }
+    setProcessed(items)
+  }, [ sort, searched, items ])
 
   const newItem = () => {
     fetch(`http://localhost:3001/products`, {
@@ -65,6 +93,37 @@ const Inventory = () => {
 
   return( 
     <Container>
+      <Grid>
+        <Grid.Row columns={2}>
+          <Grid.Column textAlign='left'>
+            {/* <Segment > */}
+              <Label>
+                Sort By: 
+              </Label>
+              <select onChange={(e) => setSort(e.target.value)}>
+                <option></option>
+                <option>Weight</option>
+                <option>Price</option>
+                <option>Name</option>
+              </select>
+            {/* </Segment> */}
+            { sort === 'Weight' || sort === 'Price' ?
+              <div>
+                <Button positive><Icon name='sort amount up' /></Button>
+                <Button positive><Icon name='sort amount down' /></Button>
+              </div>
+              : 
+              null  
+            }
+          </Grid.Column>
+
+          <Grid.Column textAlign='right'>
+            {/* <Segment> */}
+              <Input icon='search' placeholder='Search...' onChange={e => setSearched(e.target.value)}/>
+            {/* </Segment> */}
+          </Grid.Column>
+        </Grid.Row>
+      </Grid> 
       <Table striped celled definition>
         <Table.Header>
           <Table.Row>
@@ -78,7 +137,20 @@ const Inventory = () => {
         </Table.Header>
 
         <Table.Body>
-          { items.sort( (a, b) => b.avail_weight - a.avail_weight ).map(item => {
+          {/* { searched !== '' && sort !== '' ? 
+            items.filter( item => item.description.includes(searched) )
+            .sort( (a, b) => {
+              let op 
+              if (sort === 'Weight') {
+                op = b.avail_weight - a.avail_weight
+              } else if (sort === 'Price') {
+                op = b.price - a.price
+              } else if (sort === 'Name') {
+                op = a.description.localeCompare(b.description)
+              }
+              return op 
+            })
+            .map(item => {
               return(
                 <InventoryLineItem 
                   key={item.id} 
@@ -86,8 +158,62 @@ const Inventory = () => {
                   deleteItem={deleteItem}
                 />
               )
-            }
-          )}
+            })
+            :
+            searched !== '' && sort === '' ? 
+            items.filter( item => item.description.includes(searched) )
+            .map( item => {
+              return(
+                <InventoryLineItem 
+                  key={item.id} 
+                  item={item}
+                  deleteItem={deleteItem}
+                />
+              )
+            })
+            : 
+            items.sort( (a,b) => {
+              let op 
+              if (sort === 'Weight') {
+                op = b.avail_weight - a.avail_weight
+              } else if (sort === 'Price') {
+                op = b.price - a.price 
+              } else if (sort === 'Name') {
+                op = a.description.localeCompare(b.description)
+              }
+              return op
+            })
+            .map( item => {
+              return(
+                <InventoryLineItem 
+                  key={item.id} 
+                  item={item}
+                  deleteItem={deleteItem}
+                />
+              )
+            })
+          } */}
+          { processedItems.length > 0 ? 
+            processedItems.map( item => {
+              return(
+                <InventoryLineItem
+                 key={item.id}
+                 item={item}
+                 deleteItem={deleteItem}
+                />
+              )
+            })
+          :
+            items.map( item => {
+              return( 
+                <InventoryLineItem
+                  key={item.id}
+                  item={item}
+                  deleteItem={deleteItem}
+                />
+              )
+            }) 
+          }
         </Table.Body>
 
         <Table.Footer fullWidth>
@@ -112,7 +238,6 @@ const Inventory = () => {
           </Table.Row>
         </Table.Footer>
       </Table>
-      
     </Container>
   )
 }

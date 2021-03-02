@@ -108,3 +108,9 @@
 .route-headers {
   text-decoration: underline;
 }
+#item-num-sort-icon, #item-sort-icon {
+  float: right;
+}
+#item-weight-sort-icon {
+  float: left;
+}

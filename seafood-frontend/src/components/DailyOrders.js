@@ -1,9 +1,9 @@
 import React from 'react'
-import { Redirect } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { Header, Container, Segment, Icon, List, Input, Button } from 'semantic-ui-react'
+import { Icon, List, Input, Button } from 'semantic-ui-react'
 
-const DailyOrders = ({ currentUser }) => {
+const DailyOrders = () => {
 
   const [ allOrders, setAllOrders ] = useState([])
   const [ date, setDate ] = useState(null)
@@ -26,21 +26,29 @@ const DailyOrders = ({ currentUser }) => {
   }, [ date ])
 
   const filteredOrders = orders => {
-    debugger
+    // debugger
     const filtered = orders.filter( order => order.created_at.slice(0,10) === date)
     return(
       <List selection verticalAlign="middle">
-        {
+        { filtered.length > 0 ? 
         filtered.map( order => {
           return(
             <List.Item key={order.id} as='a'>
-              <Icon name='angle double right' />
-              <List.Content >
-                <List.Header >FIEST{order.created_at}</List.Header>
-              </List.Content>
+              {/* <Icon name='angle double right' /> */}
+              <Link to={`/orders/${order.id}`}>
+                <List.Content >
+                  <List.Header >#{order.order_number}</List.Header>
+                </List.Content>
+              </Link>
             </List.Item>
           )
         })
+        :
+        <List.Item>
+          <List.Content>
+            <List.Header>No Orders</List.Header>
+          </List.Content>
+        </List.Item>
         }
       </List>
     )
